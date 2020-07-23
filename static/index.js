@@ -18,7 +18,7 @@ function appendOwnMessage(msg) {
             <div class="bg-primary rounded py-2 px-3 mb-2">
                 <p class="text-small mb-0 text-white">${msg}</p>
             </div>
-            <p class="small text-muted">${new Date().toUTCString()}</p>
+            <p class="small text-muted">${new Date().getHours()}:${new Date().getMinutes()}</p>
         </div>
     </div>`
     );
@@ -31,7 +31,7 @@ function appendMessage(msg) {
 
 function newUser(user) {
     $('#users').append(
-        `<a class="list-group-item list-group-item-action text-grey rounded-0" id="user#${user}>
+        `<a class="list-group-item list-group-item-action text-grey rounded-0" id="user${user}">
             <div class="media-body ml-4">
                 <div class="d-flex align-items-center justify-content-between mb-0">
                     <h6 class="mb-0">${user}</h6>
@@ -42,5 +42,5 @@ function newUser(user) {
 }
 
 function removeUser(user) {
-    $(`#user#${user}`).remove();
+    $(`#user${user}`).remove();
 }

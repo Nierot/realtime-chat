@@ -49,8 +49,7 @@
             })
 
             socket.on('user disconnect', msg => {
-                console.log(msg);
-                removeUser(user);
+                removeUser(msg);
             })
         });
     </script>
