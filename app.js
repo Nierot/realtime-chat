@@ -37,6 +37,11 @@ io.on('connection', socket => {
     socket.on('disconnect', () => {
         console.log('A user has disconnected');
         deleteUser(socket);
+    });
+
+    socket.on('typing', msg => {
+        console.log(this.username + ' is typing!')
+        socket.broadcast.emit('typing', this.username);
     })
 });
 

@@ -17,6 +17,10 @@
 
     <script>
         var socket = undefined;
+        var typing = false;
+        var lastTyped = undefined;
+        var typingInterval = undefined;
+
         $(document).ready(() => {
             if (localStorage.getItem('username') == null) {
                 console.log('no username')
@@ -26,6 +30,15 @@
                     socket.emit('username', localStorage.getItem('username'));
                 }, 500);
             }
+
+            $('#messageInput').on('input', () => {
+                console.log('typing');
+                typing = true;
+                if (lastTyped == undefined) {
+                    lastTyped = new Date();
+                }
+                isTyping();
+            })
         })
 
         $(() => {
@@ -51,7 +64,18 @@
             socket.on('user disconnect', msg => {
                 removeUser(msg);
             })
+            
         });
+
+        function isTyping() {
+            if (new Date().getTime() - lastTyped.getTime() < 5000) {
+                typingInterval = setInterval(() => socket.emit('typing'), 1000);
+            } else {
+                clearInterval(typingInterval);
+                typing = false;
+                lastTyped = undefined;
+            }
+        }
     </script>
 </head>
 
