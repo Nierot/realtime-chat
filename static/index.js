@@ -44,3 +44,11 @@ function newUser(user) {
 function removeUser(user) {
     $(`#user${user}`).remove();
 }
+
+function isTyping(user) {
+    $(`#user${user}`).addClass('active');
+}
+
+function stoppedTyping(user) {
+    $(`#user${user}`).removeClass('active');
+}

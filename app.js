@@ -43,6 +43,11 @@ io.on('connection', socket => {
         console.log(this.username + ' is typing!')
         socket.broadcast.emit('typing', this.username);
     })
+
+    socket.on('not typing', msg => {
+        console.log(this.username + ' stopped typing');
+        socket.broadcast.emit('not typing', this.username);
+    })
 });
 
 function deleteUser(socket) {

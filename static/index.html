@@ -17,9 +17,8 @@
 
     <script>
         var socket = undefined;
-        var typing = false;
         var lastTyped = undefined;
-        var typingInterval = undefined;
+        var typing = false;
 
         $(document).ready(() => {
             if (localStorage.getItem('username') == null) {
@@ -30,52 +29,48 @@
                     socket.emit('username', localStorage.getItem('username'));
                 }, 500);
             }
-
-            $('#messageInput').on('input', () => {
-                console.log('typing');
-                typing = true;
-                if (lastTyped == undefined) {
-                    lastTyped = new Date();
-                }
-                isTyping();
-            })
         })
 
         $(() => {
             socket = io();
+
             $('form').submit(e => {
                 e.preventDefault();
-                msg = $('#messageInput').val()
+                msg = $('#messageInput').val();
                 if (msg == '') return;
                 socket.emit('chat message', msg);
+                socket.emit('not typing', msg);
+                typing = false;
                 $('#messageInput').val('');
                 appendOwnMessage(msg);
                 return false;
             });
 
-            socket.on('chat message', msg => {
-                incomingMessage(msg);
+            socket.on('chat message', msg => incomingMessage(msg));
+
+            socket.on('username', user => newUser(user));
+
+            socket.on('user disconnect', msg => removeUser(msg));
+
+            socket.on('typing', msg => isTyping(msg));
+
+            socket.on('not typing', msg => stoppedTyping(msg));
+            
+            $('#messageInput').on('input', () => {
+                lastTyped = new Date();
+                if (!typing) socket.emit('typing');
+                typing = true;
+                setTimeout(() => notTyping(), 5000);
             });
 
-            socket.on('username', user => {
-                newUser(user);
-            })
-
-            socket.on('user disconnect', msg => {
-                removeUser(msg);
-            })
-            
+            function notTyping() {
+                if (new Date().getTime() - lastTyped.getTime() > 5000 && typing) {
+                    socket.emit('not typing');
+                    typing = false;
+                }
+            }
         });
 
-        function isTyping() {
-            if (new Date().getTime() - lastTyped.getTime() < 5000) {
-                typingInterval = setInterval(() => socket.emit('typing'), 1000);
-            } else {
-                clearInterval(typingInterval);
-                typing = false;
-                lastTyped = undefined;
-            }
-        }
     </script>
 </head>
 
